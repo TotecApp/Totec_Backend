@@ -1,1 +1,1 @@
-rootProject.name = "com.mac.totec"
+rootProject.name = "ds.com.totec"
