@@ -42,6 +42,7 @@ dependencies {
     implementation("io.ktor:ktor-server-cors:$ktor_version")
     implementation("org.xerial:sqlite-jdbc:3.45.3.0")
     implementation("io.ktor:ktor-server-sessions:$ktor_version")
+    implementation("io.ktor:ktor-server-auth:$ktor_version")
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     

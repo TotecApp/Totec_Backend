@@ -1,9 +1,8 @@
 package ds.com.routes
 
+import io.ktor.server.application.*
 import ds.com.models.*
 import io.ktor.http.*
-import ds.com.plugins.UserSession
-import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing. *
@@ -11,8 +10,7 @@ import io.ktor.server.sessions.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URLDecoder
-
-var logged = false
+import ds.com.UserSession
 
 fun Route.userRouting() {
     route("/users") {
@@ -48,7 +46,6 @@ fun Route.showUsers(){
 
 fun Route.signUp(){
     post{
-        logged = true
         val user = call.receive<User>()
         userStorage.add(user)
         call.respondText("User added successfully", status = HttpStatusCode.Created)
@@ -56,26 +53,29 @@ fun Route.signUp(){
 }
 
 fun Route.login(){
-    get {
-        if(logged){
+    get{
+        call.application.log.info("Retrieving user session")
+        val userSession = call.sessions.get<UserSession>()
+        call.application.log.info("User session retrieved")
+        if(userSession != null){
             call.respondText("User already logged in")
+            return@get
         }
-        val username = URLDecoder.decode(call.parameters["username"], "UTF-8") ?: return@get call.respondText(
-            "Missing username",
-            status = HttpStatusCode.BadRequest
-        )
-        val password = URLDecoder.decode(call.parameters["password"], "UTF-8") ?: return@get call.respondText(
-            "Missing password",
-            status = HttpStatusCode.BadRequest
-        )
+
+        val username = call.parameters["username"]?.let { URLDecoder.decode(it, "UTF-8") }
+            ?: return@get call.respondText("Missing username", status = HttpStatusCode.BadRequest)
+        val password = call.parameters["password"]?.let { URLDecoder.decode(it, "UTF-8") }
+            ?: return@get call.respondText("Missing password", status = HttpStatusCode.BadRequest)
+
+        call.application.log.info("Attempting to login with username: $username")
+
         val user = userStorage.find{ it.username == username } ?: return@get call.respondText(
             "Username or password incorrect",
             status = HttpStatusCode.NotFound
         )
         if (user.password == password) {
-            call.sessions.set(UserSession(username = user.username))
-            logged = true
-            call.respondText("Login successful!")
+            call.sessions.set(UserSession(username = user.username, loggedIn = true))
+            call.respondText("Success")
         }
         else{
             call.respondText("Username or password incorrect")
@@ -83,23 +83,30 @@ fun Route.login(){
     }
 }
 
+fun Route.isLogged(){
+    get{
+        call.application.log.info("Trying to retrieve username")
+        val userSession = call.sessions.get<UserSession>()
+        call.application.log.info("Checking for existing session: $userSession")
+        if(userSession != null){
+            call.application.log.info("Session retrieved for username: ${userSession.username}")
+//            val userData = "{username: ${userSession.username}, 'loggedIn': true}"
+            val userData = UserSession(username = userSession.username, loggedIn = true)
+            call.respond(HttpStatusCode.OK, Json.encodeToString(userData))
+        }
+        else{
+            call.application.log.info("No session found")
+            val notLoggedIn = UserSession(username = null, loggedIn = false)
+            call.respond(HttpStatusCode.OK, Json.encodeToString(notLoggedIn))
+        }
+    }
+}
+
 fun Route.logout() {
     get {
-        logged = false
         call.sessions.clear<UserSession>()
         call.respondText("Logout successful", status = HttpStatusCode.OK)
     }
 }
 
-fun Route.isLogged(){
-    get{
-        if(logged){
-            val userSession = call.sessions.get<UserSession>()
-            val userData = mapOf("username" to userSession?.username)
-            call.respond(HttpStatusCode.OK, Json.encodeToString(userData))
-        }
-        else{
-            call.respondText("Logged out")
-        }
-    }
-}
+
