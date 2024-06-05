@@ -1,4 +1,46 @@
-Login succesful
-
-Login succesful
-
+†2024-06-05 00:34:21.877 [Test worker] INFO  ktor.test - No ktor.deployment.watch patterns specified, automatic reload is not active.
+^2024-06-05 00:34:21.897 [Test worker] INFO  ktor.test - Application started in 0.18 seconds.
+w2024-06-05 00:34:21.909 [DefaultDispatcher-worker-1 @coroutine#1] INFO  ktor.test - Responding at http://localhost:80
+y2024-06-05 00:34:21.909 [DefaultDispatcher-worker-1 @coroutine#1] INFO  ktor.test - Responding at https://localhost:443
+:dbUri: postgres://postgres:totec@localhost:5432/database
+“2024-06-05 00:34:23.100 [DefaultDispatcher-worker-1 @request#3] TRACE io.ktor.server.sessions.Sessions - Sessions found for /signUp: user_session
+s2024-06-05 00:34:23.112 [DefaultDispatcher-worker-1 @request#3] TRACE io.ktor.routing.Routing - Trace for [signUp]
+/, segment:0 -> SUCCESS @ /
+@  /users, segment:0 -> FAILURE "Selector didn't match" @ /users
+*  /signUp, segment:1 -> SUCCESS @ /signUp
+H    /signUp/(method:POST), segment:1 -> SUCCESS @ /signUp/(method:POST)
+@  /login, segment:0 -> FAILURE "Selector didn't match" @ /login
+B  /logout, segment:0 -> FAILURE "Selector didn't match" @ /logout
+F  /isLogged, segment:0 -> FAILURE "Selector didn't match" @ /isLogged
+Matched routes:
+$  "" -> "signUp" -> "(method:POST)"
+Route resolve result:
+#  SUCCESS @ /signUp/(method:POST)
+Ó2024-06-05 00:34:23.147 [DefaultDispatcher-worker-1 @request#3] TRACE i.k.server.engine.DefaultTransform - No Default Transformations found for class io.ktor.utils.io.ByteBufferChannel and expected type TypeInfo(type=class ds.com.models.UserDTO, reifiedType=class ds.com.models.UserDTO, kotlinType=ds.com.models.UserDTO) for call /signUp
+ 2024-06-05 00:34:23.405 [DefaultDispatcher-worker-1 @coroutine#5] DEBUG Exposed - INSERT INTO users ("password", username) VALUES ('testPassword', 'testUser')
+™2024-06-05 00:34:23.428 [DefaultDispatcher-worker-1 @request#3] TRACE io.ktor.server.sessions.Sessions - Sending session data for /signUp: user_session
+¨2024-06-05 00:34:23.430 [DefaultDispatcher-worker-1 @request#3] TRACE i.k.s.p.c.ContentNegotiation - Skipping response body transformation from HttpStatusCode to OutgoingContent for the POST /signUp request because the HttpStatusCode type is ignored. See [ContentNegotiationConfig::ignoreType].
+†2024-06-05 00:34:23.452 [Test worker] INFO  ktor.test - No ktor.deployment.watch patterns specified, automatic reload is not active.
+_2024-06-05 00:34:23.453 [Test worker] INFO  ktor.test - Application started in 0.001 seconds.
+w2024-06-05 00:34:23.453 [DefaultDispatcher-worker-1 @coroutine#6] INFO  ktor.test - Responding at http://localhost:80
+y2024-06-05 00:34:23.453 [DefaultDispatcher-worker-1 @coroutine#6] INFO  ktor.test - Responding at https://localhost:443
+:dbUri: postgres://postgres:totec@localhost:5432/database
+º2024-06-05 00:34:23.538 [DefaultDispatcher-worker-1 @request#8] TRACE io.ktor.server.sessions.Sessions - Sessions found for /login?username=testUser&password=testPassword: user_session
+r2024-06-05 00:34:23.539 [DefaultDispatcher-worker-1 @request#8] TRACE io.ktor.routing.Routing - Trace for [login]
+/, segment:0 -> SUCCESS @ /
+@  /users, segment:0 -> FAILURE "Selector didn't match" @ /users
+B  /signUp, segment:0 -> FAILURE "Selector didn't match" @ /signUp
+(  /login, segment:1 -> SUCCESS @ /login
+D    /login/(method:GET), segment:1 -> SUCCESS @ /login/(method:GET)
+B  /logout, segment:0 -> FAILURE "Selector didn't match" @ /logout
+F  /isLogged, segment:0 -> FAILURE "Selector didn't match" @ /isLogged
+Matched routes:
+"  "" -> "login" -> "(method:GET)"
+Route resolve result:
+!  SUCCESS @ /login/(method:GET)
+k2024-06-05 00:34:23.543 [DefaultDispatcher-worker-1 @request#8] INFO  ktor.test - Retrieving user session
+j2024-06-05 00:34:23.543 [DefaultDispatcher-worker-1 @request#8] INFO  ktor.test - User session retrieved
+2024-06-05 00:34:23.548 [DefaultDispatcher-worker-1 @request#8] INFO  ktor.test - Attempting to login with username: testUser
+»2024-06-05 00:34:23.636 [DefaultDispatcher-worker-1 @coroutine#10] DEBUG Exposed - SELECT users.id, users.username, users."password" FROM users WHERE users.username = 'testUser' LIMIT 1
+À2024-06-05 00:34:23.642 [DefaultDispatcher-worker-1 @request#8] TRACE io.ktor.server.sessions.Sessions - Sending session data for /login?username=testUser&password=testPassword: user_session
+’2024-06-05 00:34:23.813 [DefaultDispatcher-worker-1 @request#8] TRACE i.k.s.p.c.ContentNegotiation - Skipping because body is already converted.

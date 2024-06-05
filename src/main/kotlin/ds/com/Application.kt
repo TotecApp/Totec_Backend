@@ -1,15 +1,11 @@
 package ds.com
+import ds.com.models.PostgresUserRepository
 
 import ds.com.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.sessions.*
-import io.ktor.server.routing.*
-import ds.com.routes.userRouting
-import io.ktor.serialization.kotlinx.json.*
-import kotlinx.serialization.json.Json
-import io.ktor.server.plugins.contentnegotiation.*
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -20,7 +16,10 @@ fun main(args: Array<String>) {
         .start(wait = true)
 }
 
-fun Application.module() {
+fun Application.module(testing : Boolean = false) {
+    configureDatabases()
+    val repository = PostgresUserRepository()
+    configureSerialization(repository)
     configureRouting()
     configureCors()
     install(Sessions){
@@ -29,13 +28,6 @@ fun Application.module() {
             cookie.path = "/"
             cookie.extensions["SameSite"] = "None"
         }
-    }
-
-    install(ContentNegotiation) {
-        json(Json{
-            prettyPrint = true
-            isLenient = true
-        })
     }
 }
 

@@ -1,5 +1,7 @@
 package com.ds.models
 
+import ds.com.models.Tags
+
 class Recipe(
     val id: Int,
     val name: String,
@@ -11,7 +13,6 @@ class Recipe(
     val tags: Tags
 ) {
     fun displayDetails(){
-        // Display recipe details
         println("Name: $name")
         println("Ingredients: $ingredients")
         println("Cooking Time: $cookingTime")

@@ -1,5 +1,4 @@
 package ds.com.routes
-
 import io.ktor.server.application.*
 import ds.com.models.*
 import io.ktor.http.*
@@ -11,21 +10,26 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.URLDecoder
 import ds.com.UserSession
+import org.jetbrains.exposed.exceptions.ExposedSQLException
+import org.jetbrains.exposed.sql.transactions.transaction
+import ds.com.models.UserRepository
+import io.ktor.serialization.*
 
-fun Route.userRouting() {
+
+fun Route.userRouting(repository: UserRepository){
     route("/users") {
-        showUsers()
+        showUsers(repository)
     }
     route("/signUp"){
-        signUp()
+        signUp(repository)
     }
 
     route("/login"){
-        login()
+        login(repository)
     }
 
     route("/logout"){
-        logout()
+        logout(repository)
     }
 
     route("/isLogged"){
@@ -33,26 +37,30 @@ fun Route.userRouting() {
     }
 }
 
-fun Route.showUsers(){
+fun Route.showUsers(repository: UserRepository){
     get{
-        if(userStorage.isNotEmpty()){
-            call.respond(userStorage)
-        }
-        else{
-            call.respondText("No users found", status = HttpStatusCode.OK)
-        }
+        val users = repository.allUsers()
+        call.respond(users)
     }
 }
 
-fun Route.signUp(){
+fun Route.signUp(repository: UserRepository){
     post{
-        val user = call.receive<User>()
-        userStorage.add(user)
-        call.respondText("User added successfully", status = HttpStatusCode.Created)
+        try{
+            val user = call.receive<UserDTO>()
+            repository.addNewUser(user)
+            call.respond(HttpStatusCode.NoContent)
+        } catch (ex: IllegalStateException) {
+            println("Error: ${ex.message}")
+            call.respond(HttpStatusCode.BadRequest)
+        } catch (ex: JsonConvertException) {
+            println("Error: ${ex.message}")
+            call.respond(HttpStatusCode.BadRequest)
+        }
     }
 }
 
-fun Route.login(){
+fun Route.login(repository: UserRepository){
     get{
         call.application.log.info("Retrieving user session")
         val userSession = call.sessions.get<UserSession>()
@@ -68,14 +76,15 @@ fun Route.login(){
             ?: return@get call.respondText("Missing password", status = HttpStatusCode.BadRequest)
 
         call.application.log.info("Attempting to login with username: $username")
-
-        val user = userStorage.find{ it.username == username } ?: return@get call.respondText(
-            "Username or password incorrect",
-            status = HttpStatusCode.NotFound
-        )
-        if (user.password == password) {
-            call.sessions.set(UserSession(username = user.username, loggedIn = true))
-            call.respondText("Success")
+        val user = repository.user(username)
+        if(user != null){
+            if(user.password == password){
+                call.sessions.set(UserSession(username = user.username, loggedIn = true))
+                call.respondText("Login successful")
+            }
+            else{
+                call.respondText("Username or password incorrect")
+            }
         }
         else{
             call.respondText("Username or password incorrect")
@@ -90,7 +99,6 @@ fun Route.isLogged(){
         call.application.log.info("Checking for existing session: $userSession")
         if(userSession != null){
             call.application.log.info("Session retrieved for username: ${userSession.username}")
-//            val userData = "{username: ${userSession.username}, 'loggedIn': true}"
             val userData = UserSession(username = userSession.username, loggedIn = true)
             call.respond(HttpStatusCode.OK, Json.encodeToString(userData))
         }
@@ -102,7 +110,7 @@ fun Route.isLogged(){
     }
 }
 
-fun Route.logout() {
+fun Route.logout(repository: UserRepository) {
     get {
         call.sessions.clear<UserSession>()
         call.respondText("Logout successful", status = HttpStatusCode.OK)

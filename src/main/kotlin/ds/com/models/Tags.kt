@@ -1,4 +1,4 @@
-package com.ds.models
+package ds.com.models
 
 class Tags(
     val diets: List<String>,
