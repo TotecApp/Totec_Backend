@@ -11,6 +11,12 @@ class PostgresRecipeRepository : RecipeRepository {
         RecipeDAO.all().map(::daoToModel)
     }
 
+    override suspend fun recipeInfo(recipename: String): List<RecipeDTO> = suspendTransaction {
+        RecipeDAO
+            .find{ RecipeTable.name eq recipename}
+            .map(::daoToModel)
+    }
+
     override suspend fun recipe(id: Int): RecipeDTO? = suspendTransaction {
         RecipeDAO
             .find { RecipeTable.id eq id }

@@ -38,7 +38,7 @@ fun Route.signUp(repository: UserRepository){
         try{
             val user = call.receive<UserDTO>()
             repository.addNewUser(user)
-            call.respond(HttpStatusCode.NoContent)
+            call.respondText("User added successfully")
         } catch (ex: IllegalStateException) {
             println("Error: ${ex.message}")
             call.respond(HttpStatusCode.BadRequest)
@@ -69,7 +69,7 @@ fun Route.login(repository: UserRepository){
         if(user != null){
             if(user.password == password){
                 call.sessions.set(UserSession(username = user.username, loggedIn = true))
-                call.respondText("Login successful")
+                call.respondText("Success")
             }
             else{
                 call.respondText("Username or password incorrect")
