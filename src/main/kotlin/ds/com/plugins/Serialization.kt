@@ -10,10 +10,11 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.http.*
 import ds.com.models.*
+import ds.com.routes.recipeRouting
 import ds.com.routes.userRouting
 
 
-fun Application.configureSerialization(repository: UserRepository) {
+fun Application.configureSerialization(repositoryUser: UserRepository, repositoryRecipe: RecipeRepository) {
     install(ContentNegotiation) {
         json(Json {
             prettyPrint = true
@@ -21,6 +22,7 @@ fun Application.configureSerialization(repository: UserRepository) {
         })
     }
     routing {
-        userRouting(repository)
+        userRouting(repositoryUser)
+        recipeRouting(repositoryRecipe)
     }
 }

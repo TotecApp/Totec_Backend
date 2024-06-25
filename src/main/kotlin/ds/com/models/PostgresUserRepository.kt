@@ -1,11 +1,10 @@
 package ds.com.models
 import ds.com.db.UserDAO
-import ds.com.db.daoToModel
+import ds.com.db.daoToModelUser as daoToModel
 import ds.com.db.UserTable
 import ds.com.db.suspendTransaction
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
-
 
 class PostgresUserRepository : UserRepository {
     override suspend fun allUsers(): List<UserDTO> = suspendTransaction {

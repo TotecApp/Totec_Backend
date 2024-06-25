@@ -17,9 +17,6 @@ import io.ktor.serialization.*
 
 
 fun Route.userRouting(repository: UserRepository){
-    route("/users") {
-        showUsers(repository)
-    }
     route("/signUp"){
         signUp(repository)
     }
@@ -29,21 +26,13 @@ fun Route.userRouting(repository: UserRepository){
     }
 
     route("/logout"){
-        logout(repository)
+        logout()
     }
 
     route("/isLogged"){
         isLogged()
     }
 }
-
-fun Route.showUsers(repository: UserRepository){
-    get{
-        val users = repository.allUsers()
-        call.respond(users)
-    }
-}
-
 fun Route.signUp(repository: UserRepository){
     post{
         try{
@@ -110,7 +99,7 @@ fun Route.isLogged(){
     }
 }
 
-fun Route.logout(repository: UserRepository) {
+fun Route.logout() {
     get {
         call.sessions.clear<UserSession>()
         call.respondText("Logout successful", status = HttpStatusCode.OK)

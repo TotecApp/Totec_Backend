@@ -1,5 +1,6 @@
 package ds.com
 import ds.com.models.PostgresUserRepository
+import ds.com.models.PostgresRecipeRepository
 
 import ds.com.plugins.*
 import io.ktor.server.application.*
@@ -18,9 +19,9 @@ fun main(args: Array<String>) {
 
 fun Application.module(testing : Boolean = false) {
     configureDatabases()
-    val repository = PostgresUserRepository()
-    configureSerialization(repository)
-    configureRouting()
+    val userRepository = PostgresUserRepository()
+    val recipeRepository = PostgresRecipeRepository()
+    configureSerialization(userRepository, recipeRepository)
     configureCors()
     install(Sessions){
         cookie<UserSession>("user_session", SessionStorageMemory()){
