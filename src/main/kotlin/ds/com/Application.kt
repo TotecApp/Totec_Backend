@@ -1,4 +1,5 @@
 package ds.com
+import ds.com.models.PostgresFavoritesRepository
 import ds.com.models.PostgresUserRepository
 import ds.com.models.PostgresRecipeRepository
 
@@ -21,7 +22,8 @@ fun Application.module(testing : Boolean = false) {
     configureDatabases()
     val userRepository = PostgresUserRepository()
     val recipeRepository = PostgresRecipeRepository()
-    configureSerialization(userRepository, recipeRepository)
+    val favoriteRepository = PostgresFavoritesRepository()
+    configureSerialization(userRepository, recipeRepository, favoriteRepository)
     configureCors()
     install(Sessions){
         cookie<UserSession>("user_session", SessionStorageMemory()){

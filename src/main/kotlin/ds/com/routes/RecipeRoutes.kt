@@ -22,6 +22,9 @@ fun Route.recipeRouting(repository: RecipeRepository){
     route("/recipeInfo"){
         getRecipeInfo(repository)
     }
+    route("/getRecipeId"){
+        getRecipeId(repository)
+    }
 }
 
 fun Route.recipes(repository: RecipeRepository){
@@ -42,14 +45,21 @@ fun Route.getRecipeInfo(repository: RecipeRepository){
     get{
         try{
             val recipename = call.parameters["recipe_name"] ?: ""
-            println(recipename)
             val info = repository.recipeInfo(recipename)
-            println(info.toString())
-            call.application.log.info(info.toString())
             call.respondText(Json.encodeToString(info), ContentType.Application.Json)
         } catch (ex: ExposedSQLException) {
             println("Error: ${ex.message}")
             call.respond(HttpStatusCode.BadRequest)
         }
+    }
+}
+
+fun Route.getRecipeId(repository: RecipeRepository){
+    get{
+        val recipeName = call.parameters["recipe_name"] ?: ""
+        val id = repository.getRecipeId(recipeName)
+        call.respond(HttpStatusCode.OK, id)
+
+        call.respond(HttpStatusCode.BadRequest)
     }
 }

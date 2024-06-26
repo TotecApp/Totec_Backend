@@ -1,8 +1,6 @@
 package ds.com.models
-import ds.com.db.RecipeDAO
+import ds.com.db.*
 import ds.com.db.daoToModelRecipe as daoToModel
-import ds.com.db.RecipeTable
-import ds.com.db.suspendTransaction
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 
@@ -15,6 +13,11 @@ class PostgresRecipeRepository : RecipeRepository {
         RecipeDAO
             .find{ RecipeTable.name eq recipename}
             .map(::daoToModel)
+    }
+
+    override suspend fun getRecipeId(name: String): Int = suspendTransaction {
+        val recipe = RecipeDAO.find{ RecipeTable.name eq name}.firstOrNull()
+        recipe?.id?.value ?: -1
     }
 
     override suspend fun recipe(id: Int): RecipeDTO? = suspendTransaction {

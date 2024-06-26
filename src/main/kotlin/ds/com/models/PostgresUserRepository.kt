@@ -1,8 +1,10 @@
 package ds.com.models
+import com.typesafe.config.ConfigException.Null
 import ds.com.db.UserDAO
 import ds.com.db.daoToModelUser as daoToModel
 import ds.com.db.UserTable
 import ds.com.db.suspendTransaction
+import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 
@@ -24,6 +26,11 @@ class PostgresUserRepository : UserRepository {
             username = user.username
             password = user.password
         }
+    }
+
+    override suspend fun getUserId(name: String): Int = suspendTransaction {
+        val user = UserDAO.find{UserTable.username eq name}.firstOrNull()
+        user?.id?.value ?: -1
     }
 
     override suspend fun editUser(name: String, newName: String, newPass: String): Boolean = suspendTransaction {

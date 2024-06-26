@@ -32,13 +32,17 @@ fun Route.userRouting(repository: UserRepository){
     route("/isLogged"){
         isLogged()
     }
+
+    route("/getUserId"){
+        getId(repository)
+    }
 }
 fun Route.signUp(repository: UserRepository){
     post{
         try{
             val user = call.receive<UserDTO>()
             repository.addNewUser(user)
-            call.respondText("User added successfully")
+            call.respond(HttpStatusCode.NoContent)
         } catch (ex: IllegalStateException) {
             println("Error: ${ex.message}")
             call.respond(HttpStatusCode.BadRequest)
@@ -103,6 +107,17 @@ fun Route.logout() {
     get {
         call.sessions.clear<UserSession>()
         call.respondText("Logout successful", status = HttpStatusCode.OK)
+    }
+}
+
+fun Route.getId(repository: UserRepository){
+    get{
+        val userSession = call.sessions.get<UserSession>()
+        if((userSession != null) && (userSession.username != null)){
+            val id = repository.getUserId(userSession.username)
+            call.respond(HttpStatusCode.OK, id)
+        }
+        call.respond(HttpStatusCode.BadRequest)
     }
 }
 
