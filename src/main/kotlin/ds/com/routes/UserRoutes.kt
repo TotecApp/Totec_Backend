@@ -41,8 +41,12 @@ fun Route.signUp(repository: UserRepository){
     post{
         try{
             val user = call.receive<UserDTO>()
+            if(repository.user(user.username) != null){
+                call.respond(HttpStatusCode.BadRequest, "User already exists")
+                return@post
+            }
             repository.addNewUser(user)
-            call.respond(HttpStatusCode.NoContent)
+            call.respond(HttpStatusCode.OK, "Success")
         } catch (ex: IllegalStateException) {
             println("Error: ${ex.message}")
             call.respond(HttpStatusCode.BadRequest)
