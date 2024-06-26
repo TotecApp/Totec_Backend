@@ -9,6 +9,7 @@ data class RecipeDTO(
     //val utensils: List<String>,
     val servings: Int,
     val ingredients: String,
-    val instructions: String
+    val instructions: String,
+    val image: String
     //val tags: Tags
 )

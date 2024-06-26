@@ -28,6 +28,7 @@ object RecipeTable : IntIdTable("Recipes") {
     val servings = integer("servings")
     val ingredients = text("ingredients")
     val instructions = text("instructions")
+    val image = text("image")
 }
 
 class RecipeDAO(id: EntityID<Int>) : IntEntity(id) {
@@ -37,6 +38,7 @@ class RecipeDAO(id: EntityID<Int>) : IntEntity(id) {
     var servings by RecipeTable.servings
     var ingredients by RecipeTable.ingredients
     var instructions by RecipeTable.instructions
+    var image by RecipeTable.image
 }
 
 object FavoritesTable : IntIdTable("Favorites") {
@@ -63,7 +65,8 @@ fun daoToModelRecipe(dao: RecipeDAO) = RecipeDTO(
     dao.cookingtime,
     dao.servings,
     dao.ingredients,
-    dao.instructions
+    dao.instructions,
+    dao.image
 )
 
 fun daoToModelFavorite(dao: FavoriteDAO) = FavoritesDTO(

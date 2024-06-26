@@ -48,5 +48,4 @@ dependencies {
     implementation("io.ktor:ktor-server-auth:$ktor_version")
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-    
 }

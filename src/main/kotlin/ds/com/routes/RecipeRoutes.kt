@@ -46,6 +46,7 @@ fun Route.getRecipeInfo(repository: RecipeRepository){
         try{
             val recipename = call.parameters["recipe_name"] ?: ""
             val info = repository.recipeInfo(recipename)
+            println(info)
             call.respondText(Json.encodeToString(info), ContentType.Application.Json)
         } catch (ex: ExposedSQLException) {
             println("Error: ${ex.message}")
