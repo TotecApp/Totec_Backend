@@ -15,7 +15,7 @@ class PostgresFavoritesRepository : FavoritesRepository {
         FavoriteDAO.all().map(::daoToModel)
     }
 
-    override suspend fun favorite(userId: Int, recipeId: Int): Boolean = suspendTransaction {
+    override suspend fun isFavorite(userId: Int, recipeId: Int): Boolean = suspendTransaction {
         FavoriteDAO
             .find { (FavoritesTable.userId eq userId) and (FavoritesTable.recipeId eq recipeId) }
             .limit(1)
@@ -23,6 +23,7 @@ class PostgresFavoritesRepository : FavoritesRepository {
             .firstOrNull()
             ?.userId != null
     }
+
 
     override suspend fun addNewFavorite(favorite: FavoritesDTO): Unit = suspendTransaction {
         FavoriteDAO.new {

@@ -20,27 +20,51 @@ import kotlinx.serialization.Serializable
 
 
 fun Route.favoriteRouting(repository: FavoritesRepository){
-    route("/addToFavorites"){
-        addFavorite(repository)
+    route("/modifyFavorite"){
+        modifyFavorite(repository)
+    }
+    route("/isFavorite"){
+        isFavorite(repository)
     }
 }
 @Serializable
-data class AddFavoriteRequest(val userId: Int?, val recipeId: Int?)
+data class AddFavoriteRequest(val userId: Int, val recipeId: Int)
 
-fun Route.addFavorite(repository: FavoritesRepository){
+fun Route.modifyFavorite(repository: FavoritesRepository){
     post{
         val favoriteRequest = call.receive<AddFavoriteRequest>()
         val userId = favoriteRequest.userId
         val recipeId = favoriteRequest.recipeId
-
-        if (userId != null && recipeId != null) {
-            println("Adding to favorites: User ID: $userId, Recipe ID: $recipeId")
+        val isFav = repository.isFavorite(userId, recipeId)
+        if (!isFav) {
             val favorite = FavoritesDTO(userId, recipeId)
             repository.addNewFavorite(favorite)
             call.respond(HttpStatusCode.OK, "Success")
+        } else {
+            repository.deleteFavorite(userId, recipeId)
+            call.respond(HttpStatusCode.OK, "Success")
+        }
+
+        //else {
+        //    call.respond(HttpStatusCode.BadRequest, "Invalid user ID or recipe ID")
+        //}
+    }
+}
+
+fun Route.isFavorite(repository: FavoritesRepository) {
+    get{
+//        val favoriteRequest = call.receive<AddFavoriteRequest>()
+//        val userId = favoriteRequest.userId
+//        val recipeId = favoriteRequest.recipeId
+        val userId = call.request.queryParameters["userId"]?.toIntOrNull()
+        val recipeId = call.request.queryParameters["recipeId"]?.toIntOrNull()
+        println("userId: $userId | recipeId: $recipeId")
+        if (userId != null && recipeId != null) {
+            val isFavorite = repository.isFavorite(userId, recipeId)
+
+            call.respond(HttpStatusCode.OK, mapOf("isFavorite" to isFavorite))
         } else {
             call.respond(HttpStatusCode.BadRequest, "Invalid user ID or recipe ID")
         }
     }
 }
-
