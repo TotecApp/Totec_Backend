@@ -9,10 +9,23 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.select
 
 class PostgresFavoritesRepository : FavoritesRepository {
-    override suspend fun allFavorites(): List<FavoritesDTO> = suspendTransaction {
-        FavoriteDAO.all().map(::daoToModel)
+    override suspend fun allFavorites(userId: Int): List<RecipeDTO> = suspendTransaction {
+        (FavoritesTable innerJoin RecipeTable)
+            .slice(RecipeTable.columns)
+            .select { FavoritesTable.userId eq userId }
+            .map {
+                RecipeDTO(
+                    name = it[RecipeTable.name],
+                    cookingtime = it[RecipeTable.cookingtime],
+                    servings = it[RecipeTable.servings],
+                    ingredients = it[RecipeTable.ingredients],
+                    instructions = it[RecipeTable.instructions],
+                    image = it[RecipeTable.image]
+                )
+            }
     }
 
     override suspend fun isFavorite(userId: Int, recipeId: Int): Boolean = suspendTransaction {

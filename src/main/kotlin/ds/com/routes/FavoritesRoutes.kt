@@ -26,6 +26,9 @@ fun Route.favoriteRouting(repository: FavoritesRepository){
     route("/isFavorite"){
         isFavorite(repository)
     }
+    route("/allFavorites"){
+        allFavorites(repository)
+    }
 }
 @Serializable
 data class AddFavoriteRequest(val userId: Int, val recipeId: Int)
@@ -44,18 +47,11 @@ fun Route.modifyFavorite(repository: FavoritesRepository){
             repository.deleteFavorite(userId, recipeId)
             call.respond(HttpStatusCode.OK, "Success")
         }
-
-        //else {
-        //    call.respond(HttpStatusCode.BadRequest, "Invalid user ID or recipe ID")
-        //}
     }
 }
 
 fun Route.isFavorite(repository: FavoritesRepository) {
     get{
-//        val favoriteRequest = call.receive<AddFavoriteRequest>()
-//        val userId = favoriteRequest.userId
-//        val recipeId = favoriteRequest.recipeId
         val userId = call.request.queryParameters["userId"]?.toIntOrNull()
         val recipeId = call.request.queryParameters["recipeId"]?.toIntOrNull()
         println("userId: $userId | recipeId: $recipeId")
@@ -65,6 +61,18 @@ fun Route.isFavorite(repository: FavoritesRepository) {
             call.respond(HttpStatusCode.OK, mapOf("isFavorite" to isFavorite))
         } else {
             call.respond(HttpStatusCode.BadRequest, "Invalid user ID or recipe ID")
+        }
+    }
+}
+
+fun Route.allFavorites(repository: FavoritesRepository) {
+    get{
+        val userId = call.request.queryParameters["userId"]?.toIntOrNull()
+        if (userId != null) {
+            val recipes = repository.allFavorites(userId)
+            call.respond(HttpStatusCode.OK, recipes)
+        } else {
+            call.respond(HttpStatusCode.BadRequest, "Invalid or missing user ID")
         }
     }
 }

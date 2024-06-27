@@ -31,7 +31,6 @@ fun Route.recipes(repository: RecipeRepository){
     get{
         try{
             val recipes = repository.allRecipes()
-            println(recipes.toString())
             call.application.log.info(recipes.toString())
             call.respondText(Json.encodeToString(recipes), ContentType.Application.Json)
         } catch (ex: ExposedSQLException) {
