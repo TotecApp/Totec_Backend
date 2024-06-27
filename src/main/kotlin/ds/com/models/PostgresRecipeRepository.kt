@@ -3,6 +3,7 @@ import ds.com.db.*
 import ds.com.db.daoToModelRecipe as daoToModel
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.lowerCase
 
 class PostgresRecipeRepository : RecipeRepository {
     override suspend fun allRecipes(): List<RecipeDTO> = suspendTransaction {
@@ -27,6 +28,13 @@ class PostgresRecipeRepository : RecipeRepository {
             .map(::daoToModel)
             .firstOrNull()
     }
+
+    override suspend fun allResults(searchedString: String): List<RecipeDTO> = suspendTransaction{
+        RecipeDAO
+            .find { RecipeTable.name.lowerCase() like "%${searchedString.toLowerCase()}%" }
+            .map {daoToModel(it)}
+    }
+
 
     override suspend fun addNewRecipe(recipe: RecipeDTO): Unit = suspendTransaction {
         RecipeDAO.new {
