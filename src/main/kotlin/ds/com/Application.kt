@@ -25,6 +25,7 @@ fun Application.module(testing : Boolean = false) {
     val tagRelationRepository = PostgresTagRelationRepository()
     configureSerialization(userRepository, recipeRepository, favoriteRepository, tagRepository, tagRelationRepository)
     configureCors()
+    //initializeTags(tagRepository)
     install(Sessions){
         cookie<UserSession>("user_session", SessionStorageMemory()){
             cookie.secure = true

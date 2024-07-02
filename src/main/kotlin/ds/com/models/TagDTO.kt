@@ -3,5 +3,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TagDTO (
-    val name: String
-)
+    var name: String
+) {
+    init {
+        require(name.isNotEmpty()) { "Nome não pode ser vazio" }
+    }
+}

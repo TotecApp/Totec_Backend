@@ -5,17 +5,28 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.select
 
 class PostgresTagRelationRepository : TagRelationRepository{
     override suspend fun allTagRelations(): List<TagRelationDTO> = suspendTransaction {
         TagRelationDAO.all().map(::daoToModel)
     }
 
-    override suspend fun getTaggedRecipes(tagIds: List<Int>): List<TagRelationDTO> {
+    override suspend fun getTaggedRecipes(tagIds: List<Int>): List<RecipeDTO> {
         return suspendTransaction {
-            TagRelationDAO
-                .find{ TagRelationTable.tagId inList tagIds}
-                .map(::daoToModel)
+            (TagRelationTable innerJoin RecipeTable)
+                .slice(RecipeTable.columns)
+                .select { TagRelationTable.tagId inList tagIds }
+                .map {
+                    RecipeDTO(
+                        name = it[RecipeTable.name],
+                        cookingtime = it[RecipeTable.cookingtime],
+                        servings = it[RecipeTable.servings],
+                        ingredients = it[RecipeTable.ingredients],
+                        instructions = it[RecipeTable.instructions],
+                        image = it[RecipeTable.image]
+                    )
+                }
         }
     }
 

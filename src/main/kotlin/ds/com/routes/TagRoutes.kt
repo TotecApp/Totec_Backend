@@ -34,7 +34,14 @@ fun Route.tagRouting(repository: TagRepository, repositoryTagRelation: TagRelati
 fun Route.allTags(repository: TagRepository) {
     get {
         try {
-            val tags = repository.allTags()
+            var tags = repository.allTags()
+            if(tags.isEmpty()){
+                val baseTags = listOf("Vegan", "Vegetarian", "Gluten-Free", "Dairy-Free", "Low-Carb", "Low-Fat", "High-Protein")
+                for (tag in baseTags) {
+                    repository.addNewTag(TagDTO(tag))
+                }
+                tags = repository.allTags()
+            }
             call.application.log.info(tags.toString())
             call.respondText(Json.encodeToString(tags), ContentType.Application.Json)
         } catch (ex: Exception) {
@@ -55,6 +62,5 @@ fun Route.taggedRecipes(repository: TagRepository, repositoryTagRelation: TagRel
             println("Error: ${ex.message}")
             call.respond(HttpStatusCode.BadRequest)
         }
-
     }
 }

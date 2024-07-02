@@ -4,6 +4,7 @@ import ds.com.db.FavoritesTable
 import ds.com.db.RecipeTable
 import ds.com.db.TagTable
 import ds.com.db.TagRelationTable
+import ds.com.models.TagDTO
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -16,18 +17,10 @@ import org.jetbrains.exposed.sql.addLogger
 import org.slf4j.LoggerFactory
 import ds.com.db.UserDAO
 import ds.com.db.UserTable
+import ds.com.models.PostgresTagRepository
 import java.sql.Connection
 import java.sql.DriverManager
 import java.net.URI
-
-
-object Users : Table() {
-    val id = integer("id").autoIncrement()
-    val username = varchar("username", 50)
-    val password = varchar("password", 50)
-
-    override val primaryKey = PrimaryKey(id)
-}
 
 fun Application.configureDatabases() {
     val databaseUrl = System.getenv("DATABASE_URL")
