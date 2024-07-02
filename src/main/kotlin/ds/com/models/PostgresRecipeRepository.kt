@@ -43,6 +43,7 @@ class PostgresRecipeRepository : RecipeRepository {
             servings = recipe.servings
             ingredients = recipe.ingredients
             instructions = recipe.instructions
+            image = recipe.image
         }
     }
 
@@ -56,6 +57,7 @@ class PostgresRecipeRepository : RecipeRepository {
                 it.servings = newRecipe.servings
                 it.ingredients = newRecipe.ingredients
                 it.instructions = newRecipe.instructions
+                it.image = newRecipe.image
             }
             .firstOrNull() != null
     }

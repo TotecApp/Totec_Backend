@@ -15,7 +15,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import ds.com.models.RecipeRepository
 import io.ktor.serialization.*
 
-fun Route.recipeRouting(repository: RecipeRepository){
+fun Route.recipeRouting(repository: RecipeRepository, repositoryTag: TagRepository,repositoryTagRelation: TagRelationRepository){
     route("/allRecipes"){
         recipes(repository)
     }
@@ -27,6 +27,9 @@ fun Route.recipeRouting(repository: RecipeRepository){
     }
     route("/allResults"){
         getAllResults(repository)
+    }
+    route("/addRecipe"){
+        addRecipe(repository, repositoryTag, repositoryTagRelation)
     }
 }
 
@@ -74,6 +77,25 @@ fun Route.getAllResults(repository: RecipeRepository){
             val recipes = repository.allResults(searchedString)
             call.application.log.info(recipes.toString())
             call.respondText(Json.encodeToString(recipes), ContentType.Application.Json)
+        } catch (ex: ExposedSQLException) {
+            println("Error: ${ex.message}")
+            call.respond(HttpStatusCode.BadRequest)
+        }
+    }
+}
+
+fun Route.addRecipe(repository: RecipeRepository, repositoryTag: TagRepository, repositoryTagRelation: TagRelationRepository){
+    post {
+        try {
+            val recipe = call.receive<RecipeWithTagsDTO>()
+            val tags = recipe.tags
+            val tagIds = tags.map { repositoryTag.getTagId(it) }
+            repository.addNewRecipe(RecipeDTO(recipe.name, recipe.cookingtime, recipe.servings, recipe.ingredients, recipe.instructions, recipe.image))
+            val recipeId = repository.getRecipeId(recipe.name)
+            for (tagId in tagIds) {
+                repositoryTagRelation.addNewTagRelation(TagRelationDTO(tagId, recipeId))
+            }
+            call.respond(HttpStatusCode.OK, "Success")
         } catch (ex: ExposedSQLException) {
             println("Error: ${ex.message}")
             call.respond(HttpStatusCode.BadRequest)

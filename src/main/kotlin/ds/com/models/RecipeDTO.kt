@@ -19,3 +19,14 @@ data class RecipeDTO(
         require(image.isNotEmpty()) { "Imagem não pode ser vazia" }
     }
 }
+
+@Serializable
+data class RecipeWithTagsDTO(
+    val name: String,
+    val cookingtime: Int,
+    val servings: Int,
+    val ingredients: String,
+    var instructions: String,
+    val image: String,
+    val tags: List<String>
+)

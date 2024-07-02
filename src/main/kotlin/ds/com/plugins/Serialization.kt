@@ -25,7 +25,7 @@ fun Application.configureSerialization(repositoryUser: UserRepository, repositor
     }
     routing {
         userRouting(repositoryUser)
-        recipeRouting(repositoryRecipe)
+        recipeRouting(repositoryRecipe, repositoryTag, repositoryTagRelation)
         favoriteRouting(repositoryFavorites)
         tagRouting(repositoryTag, repositoryTagRelation)
     }
