@@ -1,5 +1,4 @@
 package ds.com.models
-import ds.com.models.Tags
 import kotlinx.serialization.Serializable
 
 @Serializable

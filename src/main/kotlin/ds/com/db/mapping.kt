@@ -7,6 +7,8 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import ds.com.models.UserDTO
 import ds.com.models.RecipeDTO
 import ds.com.models.FavoritesDTO
+import ds.com.models.TagDTO
+import ds.com.models.TagRelationDTO
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
@@ -52,6 +54,26 @@ class FavoriteDAO(id: EntityID<Int>) : IntEntity(id) {
     var recipeId by FavoritesTable.recipeId
 }
 
+object TagTable : IntIdTable("Tags") {
+    val name = varchar("name", 50)
+}
+
+class TagDAO(id: EntityID<Int>) : IntEntity(id) {
+    companion object : IntEntityClass<TagDAO>(TagTable)
+    var name by TagTable.name
+}
+
+object TagRelationTable : IntIdTable("TagRelations") {
+    val recipeId = reference("recipeId", RecipeTable)
+    val tagId = reference("tagId", TagTable)
+}
+
+class TagRelationDAO(id: EntityID<Int>) : IntEntity(id) {
+    companion object : IntEntityClass<TagRelationDAO>(TagRelationTable)
+    var recipeId by TagRelationTable.recipeId
+    var tagId by TagRelationTable.tagId
+}
+
 suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
     newSuspendedTransaction(Dispatchers.IO, statement = block)
 
@@ -72,4 +94,13 @@ fun daoToModelRecipe(dao: RecipeDAO) = RecipeDTO(
 fun daoToModelFavorite(dao: FavoriteDAO) = FavoritesDTO(
     dao.userId.value,
     dao.recipeId.value
+)
+
+fun daoToModelTag(dao: TagDAO) = TagDTO(
+    dao.name
+)
+
+fun daoToModelTagRelation(dao: TagRelationDAO) = TagRelationDTO(
+    dao.recipeId.value,
+    dao.tagId.value
 )

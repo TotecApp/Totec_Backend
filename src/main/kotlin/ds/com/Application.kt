@@ -1,7 +1,5 @@
 package ds.com
-import ds.com.models.PostgresFavoritesRepository
-import ds.com.models.PostgresUserRepository
-import ds.com.models.PostgresRecipeRepository
+import ds.com.models.*
 
 import ds.com.plugins.*
 import io.ktor.server.application.*
@@ -23,7 +21,9 @@ fun Application.module(testing : Boolean = false) {
     val userRepository = PostgresUserRepository()
     val recipeRepository = PostgresRecipeRepository()
     val favoriteRepository = PostgresFavoritesRepository()
-    configureSerialization(userRepository, recipeRepository, favoriteRepository)
+    val tagRepository = PostgresTagRepository()
+    val tagRelationRepository = PostgresTagRelationRepository()
+    configureSerialization(userRepository, recipeRepository, favoriteRepository, tagRepository, tagRelationRepository)
     configureCors()
     install(Sessions){
         cookie<UserSession>("user_session", SessionStorageMemory()){

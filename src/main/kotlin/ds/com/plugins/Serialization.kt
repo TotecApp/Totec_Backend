@@ -13,9 +13,10 @@ import ds.com.models.*
 import ds.com.routes.recipeRouting
 import ds.com.routes.userRouting
 import ds.com.routes.favoriteRouting
+import ds.com.routes.tagRouting
 
 
-fun Application.configureSerialization(repositoryUser: UserRepository, repositoryRecipe: RecipeRepository, repositoryFavorites: FavoritesRepository) {
+fun Application.configureSerialization(repositoryUser: UserRepository, repositoryRecipe: RecipeRepository, repositoryFavorites: FavoritesRepository, repositoryTag: TagRepository, repositoryTagRelation : TagRelationRepository) {
     install(ContentNegotiation) {
         json(Json {
             prettyPrint = true
@@ -26,5 +27,6 @@ fun Application.configureSerialization(repositoryUser: UserRepository, repositor
         userRouting(repositoryUser)
         recipeRouting(repositoryRecipe)
         favoriteRouting(repositoryFavorites)
+        tagRouting(repositoryTag, repositoryTagRelation)
     }
 }

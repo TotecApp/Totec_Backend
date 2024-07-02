@@ -2,6 +2,8 @@ package ds.com.plugins
 
 import ds.com.db.FavoritesTable
 import ds.com.db.RecipeTable
+import ds.com.db.TagTable
+import ds.com.db.TagRelationTable
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -52,6 +54,8 @@ fun Application.configureDatabases() {
             SchemaUtils.create(UserTable)
             SchemaUtils.create(RecipeTable)
             SchemaUtils.create(FavoritesTable)
+            SchemaUtils.create(TagTable)
+            SchemaUtils.create(TagRelationTable)
         }
     } catch (e: Exception) {
         throw RuntimeException("Failed to parse DATABASE_URL: $databaseUrl", e)
