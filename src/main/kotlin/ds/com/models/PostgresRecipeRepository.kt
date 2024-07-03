@@ -38,6 +38,7 @@ class PostgresRecipeRepository : RecipeRepository {
 
     override suspend fun addNewRecipe(recipe: RecipeDTO): Unit = suspendTransaction {
         RecipeDAO.new {
+            creatorId = recipe.creatorId
             name = recipe.name
             cookingtime = recipe.cookingtime
             servings = recipe.servings

@@ -90,7 +90,7 @@ fun Route.addRecipe(repository: RecipeRepository, repositoryTag: TagRepository, 
             val recipe = call.receive<RecipeWithTagsDTO>()
             val tags = recipe.tags
             val tagIds = tags.map { repositoryTag.getTagId(it) }
-            repository.addNewRecipe(RecipeDTO(recipe.name, recipe.cookingtime, recipe.servings, recipe.ingredients, recipe.instructions, recipe.image))
+            repository.addNewRecipe(RecipeDTO(recipe.creatorId, recipe.name, recipe.cookingtime, recipe.servings, recipe.ingredients, recipe.instructions, recipe.image))
             val recipeId = repository.getRecipeId(recipe.name)
             for (tagId in tagIds) {
                 repositoryTagRelation.addNewTagRelation(TagRelationDTO(tagId, recipeId))

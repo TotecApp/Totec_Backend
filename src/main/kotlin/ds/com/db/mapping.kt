@@ -25,6 +25,7 @@ class UserDAO(id: EntityID<Int>) : IntEntity(id) {
 }
 
 object RecipeTable : IntIdTable("Recipes") {
+    val creatorId = integer("creatorId")
     val name = varchar("name", 50)
     val cookingtime = integer("cookingtime")
     val servings = integer("servings")
@@ -35,6 +36,7 @@ object RecipeTable : IntIdTable("Recipes") {
 
 class RecipeDAO(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<RecipeDAO>(RecipeTable)
+    var creatorId by RecipeTable.creatorId
     var name by RecipeTable.name
     var cookingtime by RecipeTable.cookingtime
     var servings by RecipeTable.servings
@@ -83,6 +85,7 @@ fun daoToModelUser(dao: UserDAO) = UserDTO(
 )
 
 fun daoToModelRecipe(dao: RecipeDAO) = RecipeDTO(
+    dao.creatorId,
     dao.name,
     dao.cookingtime,
     dao.servings,
