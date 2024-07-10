@@ -3,6 +3,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RecipeDTO(
+    val creatorId: Int,
     val name: String,
     val cookingtime: Int,
     val servings: Int,
@@ -22,6 +23,7 @@ data class RecipeDTO(
 
 @Serializable
 data class RecipeWithTagsDTO(
+    val creatorId: Int,
     val name: String,
     val cookingtime: Int,
     val servings: Int,

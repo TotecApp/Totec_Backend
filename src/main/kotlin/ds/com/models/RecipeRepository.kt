@@ -9,4 +9,5 @@ interface RecipeRepository {
     suspend fun addNewRecipe(recipe: RecipeDTO)
     suspend fun editRecipe(id: Int, newRecipe: RecipeDTO): Boolean
     suspend fun deleteRecipe(id: Int): Boolean
+    suspend fun addedRecipes(creatorId: Int): List<RecipeDTO>
 }

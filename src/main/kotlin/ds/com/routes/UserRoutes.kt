@@ -36,6 +36,14 @@ fun Route.userRouting(repository: UserRepository){
     route("/getUserId"){
         getId(repository)
     }
+
+    route("/changeUsername"){
+        changeUsername(repository)
+    }
+
+    route("/changePassword"){
+        changePassword(repository)
+    }
 }
 fun Route.signUp(repository: UserRepository){
     post{
@@ -122,6 +130,34 @@ fun Route.getId(repository: UserRepository){
             call.respond(HttpStatusCode.OK, id)
         }
         call.respond(HttpStatusCode.BadRequest)
+    }
+}
+
+fun Route.changeUsername(repository: UserRepository){
+    get{
+        val username = call.parameters["username"]?: ""
+        val newUsername = call.parameters["newUsername"]?: ""
+        val password = call.parameters["password"]?: ""
+        val edited = repository.changeUsername(username, newUsername, password)
+        if(edited){
+            call.respond(HttpStatusCode.OK, "Success")
+            return@get
+        }
+        call.respond(HttpStatusCode.OK, "Failed")
+    }
+}
+
+fun Route.changePassword(repository: UserRepository){
+    get{
+        val username = call.parameters["username"]?: ""
+        val currPassword = call.parameters["password"]?: ""
+        val newPassword = call.parameters["newPassword"]?: ""
+        val edited = repository.changePassword(username, currPassword, newPassword)
+        if(edited){
+            call.respond(HttpStatusCode.OK, "Success")
+            return@get
+        }
+        call.respond(HttpStatusCode.BadRequest, "Failed")
     }
 }
 

@@ -19,6 +19,7 @@ class PostgresTagRelationRepository : TagRelationRepository{
                 .select { TagRelationTable.tagId inList tagIds }
                 .map {
                     RecipeDTO(
+                        creatorId = it[RecipeTable.creatorId],
                         name = it[RecipeTable.name],
                         cookingtime = it[RecipeTable.cookingtime],
                         servings = it[RecipeTable.servings],

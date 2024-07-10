@@ -38,6 +38,7 @@ class PostgresRecipeRepository : RecipeRepository {
 
     override suspend fun addNewRecipe(recipe: RecipeDTO): Unit = suspendTransaction {
         RecipeDAO.new {
+            creatorId = recipe.creatorId
             name = recipe.name
             cookingtime = recipe.cookingtime
             servings = recipe.servings
@@ -65,5 +66,11 @@ class PostgresRecipeRepository : RecipeRepository {
     override suspend fun deleteRecipe(id: Int): Boolean = suspendTransaction {
         val rowsDeleted = RecipeTable.deleteWhere { RecipeTable.id eq id }
         rowsDeleted == 1
+    }
+
+    override suspend fun addedRecipes(creatorId: Int): List<RecipeDTO> = suspendTransaction {
+        RecipeDAO
+            .find { RecipeTable.creatorId eq creatorId }
+            .map {daoToModel(it)}
     }
 }

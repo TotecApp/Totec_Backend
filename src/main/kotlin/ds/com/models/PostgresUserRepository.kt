@@ -6,7 +6,9 @@ import ds.com.db.UserTable
 import ds.com.db.suspendTransaction
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.update
 
 class PostgresUserRepository : UserRepository {
     override suspend fun allUsers(): List<UserDTO> = suspendTransaction {
@@ -42,6 +44,34 @@ class PostgresUserRepository : UserRepository {
                 it.password = newPass
             }
             .firstOrNull() != null
+    }
+
+    override suspend fun changeUsername(name: String, newName: String, pass: String): Boolean = suspendTransaction {
+        val user = UserDAO.find {
+            (UserTable.username eq name) and (UserTable.password eq pass)
+        }.limit(1).firstOrNull()
+
+        if (user != null) {
+            UserTable.update({ UserTable.id eq user.id }) {
+                it[username] = newName
+            }
+            return@suspendTransaction true
+        }
+        return@suspendTransaction false
+    }
+
+    override suspend fun changePassword(name: String, currPassword: String, newPassword: String): Boolean = suspendTransaction {
+        val user = UserDAO.find {
+            (UserTable.username eq name) and (UserTable.password eq currPassword)
+        }.limit(1).firstOrNull()
+
+        if (user != null) {
+            UserTable.update({ UserTable.id eq user.id }) {
+                it[password] = newPassword
+            }
+            return@suspendTransaction true
+        }
+        return@suspendTransaction false
     }
 
     override suspend fun deleteUser(name: String): Boolean = suspendTransaction {

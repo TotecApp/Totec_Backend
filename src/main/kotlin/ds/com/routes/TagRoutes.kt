@@ -36,7 +36,7 @@ fun Route.allTags(repository: TagRepository) {
         try {
             var tags = repository.allTags()
             if(tags.isEmpty()){
-                val baseTags = listOf("Vegan", "Vegetarian", "Gluten-Free", "Dairy-Free", "Low-Carb", "Low-Fat", "High-Protein")
+                val baseTags = listOf("Vegan", "Vegetarian", "Gluten-Free", "Dairy-Free", "Low-Carb", "Low-Fat", "High-Protein", "Desert")
                 for (tag in baseTags) {
                     repository.addNewTag(TagDTO(tag))
                 }

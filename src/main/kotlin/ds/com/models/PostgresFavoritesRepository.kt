@@ -18,6 +18,7 @@ class PostgresFavoritesRepository : FavoritesRepository {
             .select { FavoritesTable.userId eq userId }
             .map {
                 RecipeDTO(
+                    creatorId = it[RecipeTable.creatorId],
                     name = it[RecipeTable.name],
                     cookingtime = it[RecipeTable.cookingtime],
                     servings = it[RecipeTable.servings],
