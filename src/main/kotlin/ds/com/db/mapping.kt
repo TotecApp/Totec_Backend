@@ -104,6 +104,7 @@ fun daoToModelTag(dao: TagDAO) = TagDTO(
 )
 
 fun daoToModelTagRelation(dao: TagRelationDAO) = TagRelationDTO(
-    dao.recipeId.value,
-    dao.tagId.value
+    dao.tagId.value,
+    dao.recipeId.value
+
 )

@@ -67,4 +67,10 @@ class PostgresRecipeRepository : RecipeRepository {
         val rowsDeleted = RecipeTable.deleteWhere { RecipeTable.id eq id }
         rowsDeleted == 1
     }
+
+    override suspend fun addedRecipes(creatorId: Int): List<RecipeDTO> = suspendTransaction {
+        RecipeDAO
+            .find { RecipeTable.creatorId eq creatorId }
+            .map {daoToModel(it)}
+    }
 }
